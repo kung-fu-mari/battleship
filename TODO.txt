@@ -1,0 +1,21 @@
+iter 1:
+  kfm:
+    ship_spec
+    cell_spec_1
+    cell_spec_3
+  kfm2:
+    cell_spec 2
+    ship
+    cell
+
+iter 2:
+  kfm:
+    board_spec
+  kfm2:
+    board
+
+iter 3:
+  kfm does it all
+
+iter 4:
+  kfm2 does it all
