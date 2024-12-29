@@ -13,4 +13,18 @@ class Cell
   def place_ship(ship)
     @ship = ship
   end
+
+  def render(show_ship = false)
+    if @ship == nil 
+      return "."
+    elsif @ship.sunk?
+      return "X"
+    elsif @ship.health != @ship.length
+      return "H"
+    elsif show_ship == true
+      return "S"
+    end
+
+    return "."
+  end
 end
