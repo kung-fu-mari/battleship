@@ -35,7 +35,7 @@ class Cell
       end
     elsif @ship.sunk?
       return "X"
-    elsif @ship.health != @ship.length
+    elsif @ship.health != @ship.length and fired_upon? == true
       return "H"
     elsif show_ship == true
       return "S"
