@@ -3,16 +3,28 @@ require './lib/cell'
 class Board
   attr_reader :cells
 
-  def initialize
+  def initialize(width = 4, height = 4)
+      if width < 3
+        width = 3
+      end
+
+      if height < 3
+        height = 3
+      end
+
+      @width = width
+      @height = height
+      
       @cells = {}
       construct_cells
   end
 
   def construct_cells
-    letters = ("A".."D").to_a
-    4.times do |num_1|
+    target_letter = ("A".ord + @height - 1).chr
+    letters = ("A"..target_letter).to_a
+    @height.times do |num_1|
       letter = letters[num_1]
-      4.times do |num|
+      @width.times do |num|
         s = "#{letter}#{num + 1}"
         cell = Cell.new(s)
         @cells[s] = cell
@@ -26,6 +38,10 @@ class Board
 
   def valid_placement?(ship, coordinates)
     if not coordinates.all? { |c| valid_coordinate? c }
+      return false
+    end
+
+    if coordinates.any? {|c| @cells[c].ship != nil}
       return false
     end
 
@@ -62,4 +78,16 @@ class Board
     return true
   end
 
+  def render(show_ships = false)
+    puts "  1 2 3 4"
+    letters = ("A".."D").to_a
+    letters.each do |letter|
+      print "#{letter} "
+      4.times do |num|
+        key_string = "#{letter}#{num + 1}"
+        print "#{@cells[key_string].render(show_ships)} "
+      end
+      puts
+    end
+  end
 end
