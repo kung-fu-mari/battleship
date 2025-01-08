@@ -10,13 +10,14 @@ def start
     puts
   
     if answer == "p" or answer == "P"
+      create_boards
+      
+      create_ships 
       $player_cruiser = Ship.new("Cruiser", 3)
       $player_sub = Ship.new("Submarine", 2)
-      $player_board = Board.new
 
       $enemy_cruiser = Ship.new("Cruiser", 3)
       $enemy_sub = Ship.new("Submarine", 2)
-      $enemy_board = Board.new
     
       setup
     else
@@ -24,6 +25,47 @@ def start
       puts "Thanks for playing!"
     end
   end
+end
+
+def create_ships
+  valid = false
+  while not valid
+    puts "Please enter how many ships you want to play with."
+    puts "Keep in mind they will all have to fit\nthe dimensions of the board!"
+    print "> "
+    ship_num = gets.chomp.to_i
+  end
+end
+
+def create_boards
+  puts "Please enter the width of the game board."
+  puts "It must be a whole number greater than or equal to 3."
+  print "> "
+  width = gets.chomp.to_i 
+  while width < 3
+    puts "That number is too small."
+    puts "Please enter a whole number greater than or equal to 3."
+    print "> "
+    width = gets.chomp.to_i 
+  end
+
+  puts "\n"
+      
+  puts "Please enter the height of the game board."
+  puts "(same rules as above)"
+  print "> "
+  len = gets.chomp.to_i 
+  while len < 3
+    puts "That number is too small."
+    puts "Please enter a whole number greater than or equal to 3."
+    print "> "
+    len = gets.chomp.to_i 
+  end
+
+  puts "\n"
+  
+  $player_board = Board.new(width, len)
+  $enemy_board = Board.new(width, len)
 end
 
 def setup
