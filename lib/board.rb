@@ -1,7 +1,9 @@
 require './lib/cell'
 
 class Board
-  attr_reader :cells
+  attr_reader :cells,
+              :width,
+              :height
 
   def initialize(width = 4, height = 4)
       if width < 3
@@ -79,11 +81,18 @@ class Board
   end
 
   def render(show_ships = false)
-    puts "  1 2 3 4"
-    letters = ("A".."D").to_a
+    nums = ("1".."#{@width}").to_a
+    header_string = " "
+    nums.each do |num|
+      header_string += " #{num}" 
+    end
+    puts header_string
+    last_letter = ("A".ord + @height - 1).chr
+
+    letters = ("A"..last_letter).to_a
     letters.each do |letter|
       print "#{letter} "
-      4.times do |num|
+      @width.times do |num|
         key_string = "#{letter}#{num + 1}"
         print "#{@cells[key_string].render(show_ships)} "
       end
