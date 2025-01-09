@@ -11,14 +11,7 @@ def start
   
     if answer == "p" or answer == "P"
       create_boards
-      
       create_ships 
-      $player_cruiser = Ship.new("Cruiser", 3)
-      $player_sub = Ship.new("Submarine", 2)
-
-      $enemy_cruiser = Ship.new("Cruiser", 3)
-      $enemy_sub = Ship.new("Submarine", 2)
-    
       setup
     else
       play = false
@@ -28,12 +21,55 @@ def start
 end
 
 def create_ships
-  valid = false
-  while not valid
+
+  ship_num = 0
+  ship_num_valid = false
+  while not ship_num_valid 
     puts "Please enter how many ships you want to play with."
     puts "Keep in mind they will all have to fit\nthe dimensions of the board!"
     print "> "
     ship_num = gets.chomp.to_i
+    if ship_num < 1
+      puts "You must play with at least one ship." 
+    elsif ship_num > ($player_board.width) * $player_board.height 
+      puts "That many ships cannot fit on the board."
+    else
+      ship_num_valid = true
+    end
+  end
+
+  done = false
+  while not done
+    $player_ships = {}
+    $enemy_ships = {} 
+
+    ship_num.times do |num|
+
+      puts "Please enter data for ship #{num + 1}:"    
+      print "\tName (make this unique): "
+      name = gets.chomp
+      print "\tLength: "
+      len = gets.chomp.to_i
+
+      $player_ships[name] = Ship.new(name, len)
+      $enemy_ships[name] = Ship.new(name, len)
+    end
+
+    puts
+    puts "Here are the ships:"
+
+    $player_ships.values.each do |ship|
+      puts "Name: #{ship.name}, Length: #{ship.length}"  
+    end
+
+    puts
+    puts "Do you want to play with these ships (Y n)?"
+    print "> " 
+    answer = gets.chomp
+    if answer != "n" 
+      done = true
+    end
+    puts
   end
 end
 
@@ -69,38 +105,33 @@ def create_boards
 end
 
 def setup
-  place_enemy_ship($enemy_cruiser, $enemy_board)
-  place_enemy_ship($enemy_sub, $enemy_board)
+
+  $enemy_ships.values.each do |ship|
+    place_enemy_ship(ship, $enemy_board)
+  end
    
   puts "I have laid out my ships on the grid."
-  puts "You now need to lay out your two ships."
-  puts "The Cruiser is three units long and the Submarine is two units long."
-  puts 
-  $player_board.render
-  puts "\nEnter the squares for the Cruiser (3 spaces): "
-  print "> "
-  coords = gets.chomp.split
-  
-  while not $player_board.valid_placement?($player_cruiser, coords)
-    puts "Those are invalid coordinates. Please try again: "
+  puts "You now need to lay out your ships."
+  $player_board.render(true)
+
+  $player_ships.values.each do |ship|
+
+    puts "\nEnter the squares for the #{ship.name} (#{ship.length} spaces): "
     print "> "
     coords = gets.chomp.split
-  end
-  puts
-  place_ship($player_cruiser, coords, $player_board)
   
-  $player_board.render(true)
-  puts
-  puts "Enter the squares for the Submarine (2 spaces): "
-  print "> "
-  coords = gets.chomp.split 
+    while not $player_board.valid_placement?(ship, coords)
+      puts "Those are invalid coordinates. Please try again: "
+      print "> "
+      coords = gets.chomp.split
+    end
+    puts
+    place_ship(ship, coords, $player_board)
+  
+    $player_board.render(true)
+    puts
 
-  while not $player_board.valid_placement?($player_sub, coords)
-    puts "Those are invalid coordinates. Please try again: "
-    print "> "
-    coords = gets.chomp.split 
   end
-  place_ship($player_sub, coords, $player_board)
 
   gameplay
 end
@@ -149,13 +180,13 @@ def gameplay
     player_fire
     enemy_fire
 
-    if $enemy_cruiser.sunk? and $enemy_sub.sunk?
+    if $enemy_ships.values.all? { |ship| ship.sunk? }
       puts "You win!"
       puts
       puts "Returning to main menu..."
       puts
       game = false
-    elsif $player_cruiser.sunk? and $player_sub.sunk?
+    elsif $player_ships.values.all? { |ship| ship.sunk? }
       puts "I win!"
       puts
       puts "Returning to main menu..."
